@@ -8,3 +8,6 @@ This file captures small decisions made daily that improve repeatability, clarit
 ## Day 1
 - Keep transformations modular and readable: load → validate → transform → aggregate.
 - Always validate row count and schema before any transformation work.
+- Focused on validating core PySpark operations on the Oct 2019 dataset.
+- Deliberately kept transformations simple to establish a clean baseline before ingestion and cleaning in Day 2.
+
