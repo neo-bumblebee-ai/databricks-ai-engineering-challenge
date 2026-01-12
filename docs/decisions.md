@@ -15,3 +15,10 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Standardized event_time into event_ts and normalized price type for consistent downstream processing.
 - Combined Oct and Nov datasets with minimal cleaning rules (null/negative price filtering).
 
+## Day 3
+- Chose PySpark transformations over Pandas for all non-trivial operations to keep execution distributed and scalable.
+- Used window functions for user-level sequencing and ranking to avoid expensive self-joins.
+- Modeled derived features (revenue, purchase flags, conversion rates) explicitly instead of embedding logic inside aggregations.
+- Demonstrated joins using event-derived dimensions rather than external lookup tables to stay within dataset scope.
+- Used UDFs sparingly and only for cases not covered by native Spark functions, acknowledging performance trade-offs.
+
