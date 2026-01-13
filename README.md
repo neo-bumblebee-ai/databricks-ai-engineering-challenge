@@ -3,3 +3,4 @@
 - Day 1: Platform basics and initial PySpark exploration
 - Day 2: Ingestion and basic transformations (schema normalization, Oct + Nov union, minimal data quality checks)
 - Day 3: PySpark transformations deep dive (joins, window functions, derived features, UDFs)
+- Day 4: Delta Lake introduction (CSV to Delta, tables, schema enforcement)

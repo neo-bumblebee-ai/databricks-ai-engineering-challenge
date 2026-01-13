@@ -22,3 +22,7 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Demonstrated joins using event-derived dimensions rather than external lookup tables to stay within dataset scope.
 - Used UDFs sparingly and only for cases not covered by native Spark functions, acknowledging performance trade-offs.
 
+## Day 4
+- Converted raw CSV data to Delta format to enable ACID guarantees and schema enforcement.
+- Created Delta tables using both PySpark and SQL to validate interoperability.
+- Verified schema enforcement behavior and documented duplicate insert handling.
