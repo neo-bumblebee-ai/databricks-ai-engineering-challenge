@@ -26,3 +26,10 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Converted raw CSV data to Delta format to enable ACID guarantees and schema enforcement.
 - Created Delta tables using both PySpark and SQL to validate interoperability.
 - Verified schema enforcement behavior and documented duplicate insert handling.
+
+## Day 5
+- Implemented incremental Delta MERGE for upsert semantics instead of append-only ingestion.
+- Encountered and resolved Delta MERGE ambiguity caused by multiple source rows matching the same target keys.
+- Introduced deterministic batch deduplication using window functions prior to MERGE to guarantee idempotency.
+- Used Delta time travel to validate version history and confirm MERGE operations.
+- Attempted OPTIMIZE and VACUUM with graceful handling of environment-level restrictions.
