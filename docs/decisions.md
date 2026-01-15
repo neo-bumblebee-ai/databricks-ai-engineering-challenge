@@ -33,3 +33,10 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Introduced deterministic batch deduplication using window functions prior to MERGE to guarantee idempotency.
 - Used Delta time travel to validate version history and confirm MERGE operations.
 - Attempted OPTIMIZE and VACUUM with graceful handling of environment-level restrictions.
+
+## Day 6
+- Implemented a Medallion architecture using Delta Lake with explicit Bronze, Silver, and Gold layers.
+- Bronze layer captures raw data with audit metadata (batch_id, ingestion_ts) to support traceability and replay.
+- Silver layer applies schema standardization, data quality gates, and deterministic deduplication using window functions to ensure idempotent processing.
+- Gold layer produces business-ready aggregates (product and category performance) optimized for analytical consumption.
+- Chose overwrite-based builds for clarity and determinism, with MERGE-based incremental patterns demonstrated separately.
