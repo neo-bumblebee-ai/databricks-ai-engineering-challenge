@@ -40,3 +40,30 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Silver layer applies schema standardization, data quality gates, and deterministic deduplication using window functions to ensure idempotent processing.
 - Gold layer produces business-ready aggregates (product and category performance) optimized for analytical consumption.
 - Chose overwrite-based builds for clarity and determinism, with MERGE-based incremental patterns demonstrated separately.
+
+## Day 7 – Orchestration & Job Design Decisions
+
+**Why Databricks Jobs instead of chaining notebooks manually**
+- Jobs enforce stateless execution, eliminating hidden dependencies from interactive sessions.
+- Each task runs in a clean process, exposing configuration and schema issues early.
+
+**Why parameters via widgets**
+- Enables the same notebook to run across environments and layers.
+- Prevents hardcoded paths, which are a common source of production incidents.
+- Makes Bronze → Silver → Gold orchestration explicit and auditable.
+
+**Why strict guardrails between layers**
+- Explicit checks prevent accidental writes from Silver into Bronze paths.
+- This avoids irreversible corruption of raw data and preserves replayability.
+
+**Why deterministic deduplication**
+- Business events can arrive late or duplicated.
+- Deduplication based on natural keys + ingestion timestamp ensures idempotent processing.
+
+**Why schema enforcement over flexibility**
+- Delta Lake schema enforcement is treated as a contract, not a nuisance.
+- Schema drift is surfaced immediately rather than propagating silently downstream.
+
+**Key takeaway**
+- Jobs expose architectural weaknesses early.
+- Interactive notebooks hide them.

@@ -34,3 +34,13 @@ These capabilities are leveraged to support safe incremental processing, control
 
 The architecture favors explicit transformations and deterministic behavior over implicit optimizations, ensuring predictable outcomes as data volume and complexity grow.
 
+### Orchestration as Architecture
+- Databricks Jobs define execution order and dependency boundaries.
+- Each layer executes independently with parameterized inputs.
+- Guardrails in code prevent accidental cross-layer writes.
+
+### Design Philosophy
+- Data correctness over convenience.
+- Reproducibility over speed.
+- Explicit contracts over implicit assumptions.
+
