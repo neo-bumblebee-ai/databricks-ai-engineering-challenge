@@ -77,3 +77,17 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Used managed tables only as a fallback when external registration is restricted.
 
 Key point: governance must follow storage, not the other way around.
+
+## Day 9 – Analytics & Semantic Layer Decisions
+
+- Chose to introduce a dedicated semantic layer instead of embedding metrics directly in dashboard queries.
+- Centralized definitions for revenue, conversion, AOV, and user counts to prevent metric drift across dashboards.
+- Built analytics views exclusively on top of Silver data to preserve correctness guarantees.
+- Used percentile-based customer segmentation instead of fixed thresholds to keep tiers adaptive to data scale.
+- Introduced snapshot tables to balance analytical correctness with dashboard performance.
+- Exposed data quality indicators as first-class analytical outputs rather than offline checks.
+
+Key takeaway:
+Analytics systems fail when every dashboard defines its own truth.  
+Semantic layers prevent that failure mode.
+

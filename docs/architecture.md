@@ -102,3 +102,36 @@ Principle: catalogs organize data; they do not own it.
 - Explicit contracts over implicit assumptions  
 
 This architecture is optimized for scale, replayability, and long-term maintainability, not short-lived experimentation.s
+
+## Analytics & Semantic Layer Design
+
+The analytics layer is treated as a separate architectural concern from ingestion and transformation.
+
+### Semantic Layer as a Contract
+
+Gold views form a semantic contract between data producers and consumers.
+
+- Metric definitions are centralized and versionable
+- Dashboards depend on semantics, not raw events
+- Changes to source data do not ripple into analytical consumers
+
+This approach reduces cognitive load, simplifies governance, and makes analytical behavior predictable.
+
+### Performance Strategy
+
+Two classes of analytical assets are used:
+
+- **Semantic views** for flexibility and correctness
+- **Snapshot tables** for dashboard performance and stable latency
+
+Snapshots are designed to be refreshed on a schedule and are intentionally derived from semantic views to preserve consistency.
+
+### Data Quality as Analytics
+
+Data quality is surfaced alongside business metrics.
+
+Null rates, invalid values, and completeness trends are exposed as Gold datasets, reinforcing the idea that analytical insight includes confidence in the underlying data.
+
+Principle:
+Analytics is not just about insight.  
+It is about trust at scale.

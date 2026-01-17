@@ -34,6 +34,7 @@ The challenge provides a fixed scope and timeline. Within that boundary, the foc
 - Day 6: Medallion architecture with Delta Lake (Bronze/Silver/Gold, audit metadata, deterministic deduplication)
 - Day 7: Operationalized the pipeline using Databricks Jobs with parameterized notebooks, task dependencies, and failure isolation.
 - Day 8: Validated Unity Catalog concepts by aligning Volumes, Delta storage, and catalog registration with controlled governance boundaries.
+- Day 9: Focuses on transforming the pipeline outputs into analysis-grade datasets that can reliably power dashboards and downstream decision-making.
 
 ## Tech Stack
 
