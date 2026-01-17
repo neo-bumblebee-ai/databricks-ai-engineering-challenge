@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Databricks 14 Days of AI Challenge" width="100%"/>
+  <img src="screenshots/banner.png" alt="Databricks 14 Days of AI Challenge" width="100%"/>
 </p>
 
 <div align="center">
