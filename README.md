@@ -34,3 +34,26 @@ The challenge provides a fixed scope and timeline. Within that boundary, the foc
 - Day 6: Medallion architecture with Delta Lake (Bronze/Silver/Gold, audit metadata, deterministic deduplication)
 - Day 7: Operationalized the pipeline using Databricks Jobs with parameterized notebooks, task dependencies, and failure isolation.
 - Day 8: Validated Unity Catalog concepts by aligning Volumes, Delta storage, and catalog registration with controlled governance boundaries.
+
+## Tech Stack
+
+The stack used in this repository reflects tools and patterns I’ve worked with extensively in production environments, adapted here to the Databricks platform and its constraints.
+
+- **Platform:** Databricks (Community Edition / Professional), Spark SQL, Delta Lake  
+- **Languages:** Python, SQL  
+- **Data Processing:** PySpark (structured transformations, windowing, incremental logic)  
+- **Storage & Table Management:** Delta Lake, managed tables, Volume-backed storage  
+- **ML & Experimentation:** Scikit-Learn, MLflow (foundational usage and integration patterns)  
+- **Visualization & Analysis:** Pandas, Matplotlib, Seaborn  
+
+The emphasis throughout the repo is not on tool novelty, but on how these components fit together in a governable, production-oriented data architecture.
+
+---
+
+## Acknowledgments
+
+This challenge is organized by **Indian Data Club (IDC)** and supported by **Databricks** and **Codebasics**.
+
+The structure and cadence provided by the challenge make it a useful forcing function for hands-on validation. The real value, however, comes from applying these exercises through the lens of real-world data platform design rather than treating them as isolated tutorials.
+
+Credit to the organizers for creating a framework that encourages implementation, iteration, and thoughtful discussion.
