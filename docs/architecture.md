@@ -1,46 +1,104 @@
 # Architecture Notes
 
-## Current approach
-- Databricks Community Edition for compute and notebooks
-- Dataset stored in a controlled workspace location (Volumes)
-- PySpark notebooks as the primary artifact, exported to this repo daily
+## Platform Context
+- Databricks Community Edition used for compute, notebooks, and orchestration
+- Data stored in Unity Catalog Volumes under a controlled workspace namespace
+- PySpark notebooks treated as pipeline units, versioned daily in Git
 
-## Medallion Architecture – Design Rationale (Day 6)
+This setup prioritizes reproducibility, clear ownership, and portability over convenience.
 
-The Medallion architecture is implemented as a deliberate separation of concerns rather than a purely technical layering.
+---
+
+## Medallion Architecture – Intentional Design
+
+The Medallion architecture is implemented as an operational contract, not a cosmetic layering.
+
+Each layer exists to absorb a specific class of failure without leaking instability downstream.
+
+---
 
 ### Bronze Layer – System of Record
-The Bronze layer preserves raw source data with minimal transformation. Its primary responsibility is **fidelity and traceability**, not correctness.  
-Audit metadata such as batch identifiers and ingestion timestamps are introduced at this stage to support replay, lineage, and operational debugging.
 
-No business rules are enforced here by design. Any correction at this layer would compromise the ability to reason about upstream data quality and source behavior.
+The Bronze layer preserves source data with minimal intervention.
+
+- Raw events are ingested with full fidelity
+- Operational metadata (batch_id, ingestion_ts) is added for traceability
+- No business rules or corrections are applied
+
+Bronze exists to support replay, auditability, and forensic debugging.  
+Correctness is intentionally deferred.
+
+---
 
 ### Silver Layer – System of Truth
-The Silver layer represents the first point where **data contracts** are enforced.  
-This includes schema normalization, data quality gates, and deterministic deduplication to ensure idempotent processing.
 
-Deduplication is handled explicitly using stable business keys and ordering logic, rather than relying on implicit assumptions or append-only behavior.  
-This layer is optimized for correctness and consistency, forming the foundation for all downstream analytics.
+The Silver layer is where data contracts are enforced.
+
+- Schemas are normalized and stabilized
+- Deterministic deduplication is applied using business keys and ingestion order
+- Data quality rules are explicit and repeatable
+
+Silver is designed for idempotency and consistency.  
+Every downstream metric assumes Silver is correct by construction.
+
+---
 
 ### Gold Layer – System of Insight
-The Gold layer exposes **business-ready aggregates** derived from Silver data.  
-Datasets at this level are shaped by access patterns rather than source structure, prioritizing query efficiency, semantic clarity, and consumer usability.
 
-Gold outputs are intentionally decoupled from ingestion mechanics, allowing analytical use cases to evolve without destabilizing upstream processing.
+The Gold layer exposes consumer-facing aggregates.
 
-### Storage and Transaction Semantics
-Delta Lake underpins all layers, providing ACID guarantees, schema enforcement, and versioned storage.  
-These capabilities are leveraged to support safe incremental processing, controlled backfills, and time-based debugging without introducing custom state management.
+- Built exclusively from Silver data
+- Shaped by access patterns, not source structure
+- Optimized for analytical queries and semantic clarity
 
-The architecture favors explicit transformations and deterministic behavior over implicit optimizations, ensuring predictable outcomes as data volume and complexity grow.
+Gold datasets are insulated from ingestion mechanics so analytical use cases can evolve independently.
 
-### Orchestration as Architecture
-- Databricks Jobs define execution order and dependency boundaries.
-- Each layer executes independently with parameterized inputs.
-- Guardrails in code prevent accidental cross-layer writes.
+---
 
-### Design Philosophy
-- Data correctness over convenience.
-- Reproducibility over speed.
-- Explicit contracts over implicit assumptions.
+## Storage and Transaction Semantics
 
+Delta Lake underpins all layers.
+
+- ACID guarantees ensure safe concurrent writes
+- Schema enforcement prevents silent drift
+- Versioned storage enables time travel and controlled backfills
+
+State is managed through data, not application logic.  
+Determinism is favored over implicit optimizations.
+
+---
+
+## Orchestration as Architecture
+
+Pipeline execution is treated as a first-class architectural concern.
+
+- Databricks Jobs define layer dependencies (Bronze → Silver → Gold)
+- Notebooks are parameterized and stateless
+- Guardrails prevent accidental cross-layer writes
+
+Failures are isolated by layer to avoid partial corruption.
+
+---
+
+## Governance and Catalog Design
+
+Governance follows storage, not the other way around.
+
+- Volumes define physical ownership and constrain catalog usage
+- Delta tables are materialized before metastore registration
+- Schemas represent ownership boundaries
+- Views act as consumer contracts
+
+External tables are preferred to decouple data lifecycle from metadata lifecycle and support replayability.
+
+Principle: catalogs organize data; they do not own it.
+
+---
+
+## Design Principles
+
+- Correctness over convenience  
+- Reproducibility over speed  
+- Explicit contracts over implicit assumptions  
+
+This architecture is optimized for scale, replayability, and long-term maintainability, not short-lived experimentation.s

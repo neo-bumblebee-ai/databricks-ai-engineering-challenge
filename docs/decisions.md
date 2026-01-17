@@ -67,3 +67,13 @@ This file captures small decisions made daily that improve repeatability, clarit
 **Key takeaway**
 - Jobs expose architectural weaknesses early.
 - Interactive notebooks hide them.
+
+## Day 8 – Governance Decisions
+
+- Validated physical data access before applying governance constructs.
+- Wrote Delta tables to storage first, then registered them in the metastore.
+- Aligned catalog usage with Volume ownership to avoid storage–metadata conflicts.
+- Preferred external Delta tables to decouple data lifecycle from metadata.
+- Used managed tables only as a fallback when external registration is restricted.
+
+Key point: governance must follow storage, not the other way around.
