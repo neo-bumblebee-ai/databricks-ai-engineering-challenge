@@ -103,3 +103,9 @@ Semantic layers prevent that failure mode.
 Key takeaway:
 If you don’t control file layout and pruning, performance becomes accidental and degrades silently over time.
 
+## Day 11 – Statistical Analysis & ML Prep
+
+- Ran hypothesis tests at a stable grain (daily KPIs) instead of raw events to avoid misleading results.
+- Reported effect size alongside test statistics to keep results interpretable.
+- Avoided event-level correlation traps; correlated metrics only after aggregation to meaningful grains.
+- Built ML features as a reusable Gold table to prevent duplicate feature logic across notebooks and models.

@@ -36,6 +36,7 @@ The challenge provides a fixed scope and timeline. Within that boundary, the foc
 - Day 8: Validated Unity Catalog concepts by aligning Volumes, Delta storage, and catalog registration with controlled governance boundaries.
 - Day 9: Focuses on transforming the pipeline outputs into analysis-grade datasets that can reliably power dashboards and downstream decision-making.
 - Day 10: Focuses on performance as a design constraint, not a tuning afterthought. The goal was to make the Silver and Gold layers fast under common access patterns
+- Day 11: moves from analytics into ML readiness. The work focuses on producing statistics you can defend, hypotheses you can test, and features you can reuse.
 
 ## Tech Stack
 

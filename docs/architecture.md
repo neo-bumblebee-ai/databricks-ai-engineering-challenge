@@ -147,3 +147,19 @@ It is about trust at scale.
 
 Key takeaway:  
 Performance is shaped by data layout and access patterns, not last-mile query tweaks.
+
+
+## Statistical Analysis and ML Feature Layer
+
+Day 11 introduces a bridge between analytics and ML by formalizing two Gold assets:
+
+- **gold.daily_kpis**: stable-grain dataset for statistical testing and trend analysis
+- **gold.ml_features_purchase_intent**: reusable feature table for model training
+
+Key design choices:
+- Statistical tests operate on aggregated KPIs to ensure comparable samples.
+- Feature engineering is treated as a governed layer, not notebook logic.
+- Features combine time signals, user behavior history, user lifetime aggregates, and product popularity signals.
+
+Principle:
+ML readiness comes from reproducible feature tables, not ad-hoc transformations.
