@@ -135,3 +135,15 @@ Null rates, invalid values, and completeness trends are exposed as Gold datasets
 Principle:
 Analytics is not just about insight.  
 It is about trust at scale.
+
+## Performance Optimization
+
+- Inspected query plans before changing storage to confirm pruning, pushdown, and shuffle behavior.
+- Partitioned Silver events by `event_date` and `event_type` to align with dominant analytical filters.
+- Avoided high-cardinality partition keys (user_id, product_id) to prevent small-file sprawl and skew.
+- Treated file compaction as mandatory; used OPTIMIZE/ZORDER when available, otherwise enforced controlled rewrites.
+- Benchmarked representative workload queries to validate improvements and avoid placebo tuning.
+- Used caching only for short-lived, iterative analytics and explicitly uncached to keep results honest.
+
+Key takeaway:  
+Performance is shaped by data layout and access patterns, not last-mile query tweaks.

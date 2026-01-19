@@ -91,3 +91,15 @@ Key takeaway:
 Analytics systems fail when every dashboard defines its own truth.  
 Semantic layers prevent that failure mode.
 
+## Day 10 – Performance Optimization Decisions
+
+- Validated performance behavior by inspecting query plans before changing storage layout.
+- Partitioned Silver events by `event_date` and `event_type` to match the dominant analytical filter patterns.
+- Avoided partitioning on high-cardinality columns (user_id/product_id) to prevent small-file proliferation and skew.
+- Treated compaction as mandatory for analytics stability; used OPTIMIZE/ZORDER when supported, otherwise used controlled rewrites to compact files.
+- Benchmarked using representative workload queries instead of single synthetic tests to avoid placebo optimizations.
+- Used caching only for iterative development and dashboard loops; explicitly materialized and uncached to keep results honest.
+
+Key takeaway:
+If you don’t control file layout and pruning, performance becomes accidental and degrades silently over time.
+
