@@ -109,3 +109,9 @@ If you don’t control file layout and pruning, performance becomes accidental a
 - Reported effect size alongside test statistics to keep results interpretable.
 - Avoided event-level correlation traps; correlated metrics only after aggregation to meaningful grains.
 - Built ML features as a reusable Gold table to prevent duplicate feature logic across notebooks and models.
+
+## Day 12 – MLflow Basics
+
+- Chose time-based splits over random splits to avoid leakage.
+- Logged models and metrics in MLflow to make experiments comparable and reproducible.
+- Started with simple, explainable features and established a baseline before tuning.

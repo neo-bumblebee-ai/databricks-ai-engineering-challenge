@@ -163,3 +163,14 @@ Key design choices:
 
 Principle:
 ML readiness comes from reproducible feature tables, not ad-hoc transformations.
+
+## ML Experiment Architecture
+
+ML experiments are treated as a governed workflow:
+
+- Training datasets are materialized as Gold tables to make inputs reproducible.
+- Evaluation uses time-based splits to reflect production behavior and prevent leakage.
+- MLflow is used for tracking parameters, metrics, and model artifacts to support comparison and iteration.
+
+Principle:
+If experiments can’t be reproduced from versioned inputs, they’re not engineering artifacts.
