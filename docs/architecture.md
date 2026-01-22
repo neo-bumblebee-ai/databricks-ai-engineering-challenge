@@ -174,3 +174,23 @@ ML experiments are treated as a governed workflow:
 
 Principle:
 If experiments can’t be reproduced from versioned inputs, they’re not engineering artifacts.
+
+## Model Comparison & Feature Engineering 
+
+### Flow
+Bronze → Silver → Gold (`ml_training_product_day`)  
+→ Spark ML Pipelines  
+→ MLflow Experiment Tracking
+
+### ML Layer
+- VectorAssembler
+- LR / RF / GBT regressors
+- Train/Test split (80/20)
+- Hyperparameter tuning
+
+### Tracking
+- MLflow (file-backed)
+- Stored metrics, parameters, artifacts, signatures
+
+### Principles
+Reproducible. Explainable. Production-oriented.

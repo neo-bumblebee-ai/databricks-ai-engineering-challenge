@@ -115,3 +115,14 @@ If you don’t control file layout and pruning, performance becomes accidental a
 - Chose time-based splits over random splits to avoid leakage.
 - Logged models and metrics in MLflow to make experiments comparable and reproducible.
 - Started with simple, explainable features and established a baseline before tuning.
+
+# Decisions – Day 13
+
+- Spark ML used to keep data and training fully distributed
+- Regression chosen due to numeric business target (`purchases`)
+- Features auto-detected to handle schema evolution
+- Identifiers excluded to avoid leakage and overfitting
+- TrainValidationSplit used for faster tuning
+- RMSE prioritized for business-relevant error sensitivity
+- MLflow file-based tracking used due to CE limitations
+- Model signatures logged for inference safety
