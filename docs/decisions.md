@@ -116,7 +116,7 @@ If you don’t control file layout and pruning, performance becomes accidental a
 - Logged models and metrics in MLflow to make experiments comparable and reproducible.
 - Started with simple, explainable features and established a baseline before tuning.
 
-# Day 13 - Model Comparison & Feature Engineering
+## Day 13 - Model Comparison & Feature Engineering
 
 - Spark ML used to keep data and training fully distributed
 - Regression chosen due to numeric business target (`purchases`)
