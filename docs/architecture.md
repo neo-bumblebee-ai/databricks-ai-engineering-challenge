@@ -194,3 +194,24 @@ Bronze → Silver → Gold (`ml_training_product_day`)
 
 ### Principles
 Reproducible. Explainable. Production-oriented.
+
+## AI-Powered Analytics: Genie & Mosaic AI
+
+### Flow
+Gold Analytics Tables  
+→ Genie (NL → SQL)  
+→ Spark / SQL Analytics  
+→ GenAI Inference (NLP)  
+→ MLflow Artifact & Insight Tracking  
+
+### Components
+- Analytics Layer: Gold views and KPI tables
+- Query Layer: SQL + Genie abstraction
+- AI Layer: NLP inference (sentiment)
+- Insight Layer: Heuristic + AI-assisted summaries
+- Tracking Layer: MLflow (file-backed, Volume storage)
+
+### Design Principles
+- AI augments analytics, not replaces it
+- Interpretability over black-box generation
+- Traceable insights via artifacts

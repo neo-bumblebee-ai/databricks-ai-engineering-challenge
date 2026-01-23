@@ -126,3 +126,14 @@ If you don’t control file layout and pruning, performance becomes accidental a
 - RMSE prioritized for business-relevant error sensitivity
 - MLflow file-based tracking used due to CE limitations
 - Model signatures logged for inference safety
+
+## Decisions – Day 14
+
+- SQL kept as the canonical layer; Genie used only as an interface
+- Gold views reused to avoid duplicating business logic
+- Simple NLP task chosen to focus on integration, not model complexity
+- MLflow used to track GenAI artifacts for reproducibility
+- Volume-backed tracking used due to Community Edition constraints
+- AI insights generated from KPIs, not raw events, to stay business-focused
+- Fallback logic added to keep workflow robust if external models fail
+

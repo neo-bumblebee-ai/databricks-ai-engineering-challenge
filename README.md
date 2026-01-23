@@ -39,6 +39,7 @@ The challenge provides a fixed scope and timeline. Within that boundary, the foc
 - Day 11: moves from analytics into ML readiness. The work focuses on producing statistics you can defend, hypotheses you can test, and features you can reuse.
 - Day 12: Formalizes the transition from feature engineering to reproducible experiments.
 - Day 13: Compare multiple ML models using Spark ML, apply feature engineering, tune hyperparameters, and track experiments with MLflow.
+- Day 14: Explore Databricks Genie, Mosaic AI concepts, and integrate GenAI-style workflows into an analytics pipeline.
 
 ## Tech Stack
 
