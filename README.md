@@ -9,7 +9,7 @@
 [![Databricks](https://img.shields.io/badge/Databricks-FF3621?style=for-the-badge&logo=databricks&logoColor=white)](https://databricks.com/)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Delta Lake](https://img.shields.io/badge/Delta_Lake-00ADD8?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/Status-In_Progress-yellow?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/Status-Completed-green?style=for-the-badge)]()
 
 </div>
 
