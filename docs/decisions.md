@@ -1,6 +1,7 @@
 # Engineering Decisions Log
 
-This file captures small decisions made daily that improve repeatability, clarity, and scale.
+This file captures daily decisions that improve repeatability, clarity, and long-term maintainability.
+It documents why choices were made, not step-by-step instructions.
 
 ## Day 0
 - Preferred Volumes (Unity Catalog) for dataset storage instead of ad-hoc uploads, to keep paths consistent and permissions explicit.
@@ -41,7 +42,7 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Gold layer produces business-ready aggregates (product and category performance) optimized for analytical consumption.
 - Chose overwrite-based builds for clarity and determinism, with MERGE-based incremental patterns demonstrated separately.
 
-## Day 7 – Orchestration & Job Design Decisions
+## Day 7: Orchestration and Job Design Decisions
 
 **Why Databricks Jobs instead of chaining notebooks manually**
 - Jobs enforce stateless execution, eliminating hidden dependencies from interactive sessions.
@@ -64,23 +65,22 @@ This file captures small decisions made daily that improve repeatability, clarit
 - Delta Lake schema enforcement is treated as a contract, not a nuisance.
 - Schema drift is surfaced immediately rather than propagating silently downstream.
 
-**Key takeaway**
+Key takeaway:
 - Jobs expose architectural weaknesses early.
 - Interactive notebooks hide them.
 
-## Day 8 – Governance Decisions
-
+## Day 8: Governance Decisions
 - Validated physical data access before applying governance constructs.
 - Wrote Delta tables to storage first, then registered them in the metastore.
 - Aligned catalog usage with Volume ownership to avoid storage–metadata conflicts.
 - Preferred external Delta tables to decouple data lifecycle from metadata.
 - Used managed tables only as a fallback when external registration is restricted.
 
-Key point: governance must follow storage, not the other way around.
+Key point:
+Governance must follow storage, not the other way around.
 
-## Day 9 – Analytics & Semantic Layer Decisions
-
-- Chose to introduce a dedicated semantic layer instead of embedding metrics directly in dashboard queries.
+## Day 9: Analytics and Semantic Layer Decisions
+- Introduced a dedicated semantic layer instead of embedding metrics directly in dashboard queries.
 - Centralized definitions for revenue, conversion, AOV, and user counts to prevent metric drift across dashboards.
 - Built analytics views exclusively on top of Silver data to preserve correctness guarantees.
 - Used percentile-based customer segmentation instead of fixed thresholds to keep tiers adaptive to data scale.
@@ -88,13 +88,12 @@ Key point: governance must follow storage, not the other way around.
 - Exposed data quality indicators as first-class analytical outputs rather than offline checks.
 
 Key takeaway:
-Analytics systems fail when every dashboard defines its own truth.  
+Analytics systems fail when every dashboard defines its own truth.
 Semantic layers prevent that failure mode.
 
-## Day 10 – Performance Optimization Decisions
-
+## Day 10: Performance Optimization Decisions
 - Validated performance behavior by inspecting query plans before changing storage layout.
-- Partitioned Silver events by `event_date` and `event_type` to match the dominant analytical filter patterns.
+- Partitioned Silver events by `event_date` and `event_type` to match dominant analytical filter patterns.
 - Avoided partitioning on high-cardinality columns (user_id/product_id) to prevent small-file proliferation and skew.
 - Treated compaction as mandatory for analytics stability; used OPTIMIZE/ZORDER when supported, otherwise used controlled rewrites to compact files.
 - Benchmarked using representative workload queries instead of single synthetic tests to avoid placebo optimizations.
@@ -103,37 +102,32 @@ Semantic layers prevent that failure mode.
 Key takeaway:
 If you don’t control file layout and pruning, performance becomes accidental and degrades silently over time.
 
-## Day 11 – Statistical Analysis & ML Prep
-
+## Day 11: Statistical Analysis and ML Prep
 - Ran hypothesis tests at a stable grain (daily KPIs) instead of raw events to avoid misleading results.
 - Reported effect size alongside test statistics to keep results interpretable.
 - Avoided event-level correlation traps; correlated metrics only after aggregation to meaningful grains.
 - Built ML features as a reusable Gold table to prevent duplicate feature logic across notebooks and models.
 
-## Day 12 – MLflow Basics
-
-- Chose time-based splits over random splits to avoid leakage.
+## Day 12: MLflow Basics
+- Chose time-based splits over random splits to reduce leakage risk.
 - Logged models and metrics in MLflow to make experiments comparable and reproducible.
 - Started with simple, explainable features and established a baseline before tuning.
 
-## Day 13 - Model Comparison & Feature Engineering
+## Day 13: Model Comparison and Feature Engineering
+- Spark ML used to keep data and training fully distributed.
+- Regression chosen due to numeric business target (`purchases`).
+- Features auto-detected to handle schema evolution.
+- Identifiers excluded to avoid leakage and overfitting.
+- TrainValidationSplit used for faster tuning.
+- RMSE prioritized for business-relevant error sensitivity.
+- MLflow file-based tracking used due to Community Edition constraints.
+- Model signatures logged for inference safety.
 
-- Spark ML used to keep data and training fully distributed
-- Regression chosen due to numeric business target (`purchases`)
-- Features auto-detected to handle schema evolution
-- Identifiers excluded to avoid leakage and overfitting
-- TrainValidationSplit used for faster tuning
-- RMSE prioritized for business-relevant error sensitivity
-- MLflow file-based tracking used due to CE limitations
-- Model signatures logged for inference safety
-
-## Decisions – Day 14
-
-- SQL kept as the canonical layer; Genie used only as an interface
-- Gold views reused to avoid duplicating business logic
-- Simple NLP task chosen to focus on integration, not model complexity
-- MLflow used to track GenAI artifacts for reproducibility
-- Volume-backed tracking used due to Community Edition constraints
-- AI insights generated from KPIs, not raw events, to stay business-focused
-- Fallback logic added to keep workflow robust if external models fail
-
+## Day 14: AI-Powered Analytics
+- SQL kept as the canonical layer; Genie used only as an interface.
+- Gold views reused to avoid duplicating business logic.
+- Simple NLP task chosen to focus on integration, not model complexity.
+- MLflow used to track GenAI artifacts for reproducibility.
+- Volume-backed tracking used due to Community Edition constraints.
+- AI insights generated from KPIs, not raw events, to stay business-focused.
+- Fallback logic added to keep workflow robust if external models fail.

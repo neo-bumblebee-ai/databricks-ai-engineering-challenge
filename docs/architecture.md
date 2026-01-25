@@ -9,7 +9,21 @@ This setup prioritizes reproducibility, clear ownership, and portability over co
 
 ---
 
-## Medallion Architecture – Intentional Design
+## What Gets Built
+
+### Layers and primary assets
+- **Bronze:** raw event ingestion + audit metadata (`batch_id`, `ingestion_ts`)
+- **Silver:** normalized schema + deterministic deduplication + quality gates
+- **Gold:** consumer-facing analytical tables and views
+  - `gold.daily_kpis`
+  - `gold.ml_features_purchase_intent`
+  - `ml_training_product_day` (Gold training dataset used for modeling)
+
+The intent is to keep downstream consumption stable even as ingestion logic evolves.
+
+---
+
+## Medallion Architecture as an Operational Contract
 
 The Medallion architecture is implemented as an operational contract, not a cosmetic layering.
 
@@ -17,41 +31,38 @@ Each layer exists to absorb a specific class of failure without leaking instabil
 
 ---
 
-### Bronze Layer – System of Record
+### Bronze Layer: System of Record
+Bronze preserves source data with minimal intervention.
 
-The Bronze layer preserves source data with minimal intervention.
+- Raw events ingested with full fidelity
+- Operational metadata (`batch_id`, `ingestion_ts`) added for traceability
+- No business rules or corrections applied
 
-- Raw events are ingested with full fidelity
-- Operational metadata (batch_id, ingestion_ts) is added for traceability
-- No business rules or corrections are applied
-
-Bronze exists to support replay, auditability, and forensic debugging.  
+Bronze exists to support replay, auditability, and forensic debugging.
 Correctness is intentionally deferred.
 
 ---
 
-### Silver Layer – System of Truth
+### Silver Layer: System of Truth
+Silver is where data contracts are enforced.
 
-The Silver layer is where data contracts are enforced.
+- Schemas normalized and stabilized
+- Deterministic deduplication applied using business keys and ingestion order
+- Data quality rules explicit and repeatable
 
-- Schemas are normalized and stabilized
-- Deterministic deduplication is applied using business keys and ingestion order
-- Data quality rules are explicit and repeatable
-
-Silver is designed for idempotency and consistency.  
+Silver is designed for idempotency and consistency.
 Every downstream metric assumes Silver is correct by construction.
 
 ---
 
-### Gold Layer – System of Insight
-
-The Gold layer exposes consumer-facing aggregates.
+### Gold Layer: System of Insight
+Gold exposes consumer-facing aggregates and analysis-grade datasets.
 
 - Built exclusively from Silver data
 - Shaped by access patterns, not source structure
 - Optimized for analytical queries and semantic clarity
 
-Gold datasets are insulated from ingestion mechanics so analytical use cases can evolve independently.
+Gold is insulated from ingestion mechanics so analytics can evolve without destabilizing consumers.
 
 ---
 
@@ -59,11 +70,11 @@ Gold datasets are insulated from ingestion mechanics so analytical use cases can
 
 Delta Lake underpins all layers.
 
-- ACID guarantees ensure safe concurrent writes
-- Schema enforcement prevents silent drift
-- Versioned storage enables time travel and controlled backfills
+- ACID guarantees for safe concurrent writes
+- Schema enforcement to prevent silent drift
+- Versioned storage for time travel and controlled backfills
 
-State is managed through data, not application logic.  
+State is managed through data, not application logic.
 Determinism is favored over implicit optimizations.
 
 ---
@@ -96,91 +107,95 @@ Principle: catalogs organize data; they do not own it.
 ---
 
 ## Design Principles
+- Correctness over convenience
+- Reproducibility over speed
+- Explicit contracts over implicit assumptions
 
-- Correctness over convenience  
-- Reproducibility over speed  
-- Explicit contracts over implicit assumptions  
+This architecture is optimized for scale, replayability, and long-term maintainability, not short-lived experimentation.
 
-This architecture is optimized for scale, replayability, and long-term maintainability, not short-lived experimentation.s
+---
 
-## Analytics & Semantic Layer Design
+## Analytics and Semantic Layer Design
 
 The analytics layer is treated as a separate architectural concern from ingestion and transformation.
 
 ### Semantic Layer as a Contract
+Gold views form a semantic contract between producers and consumers.
 
-Gold views form a semantic contract between data producers and consumers.
-
-- Metric definitions are centralized and versionable
+- Metric definitions centralized and versionable
 - Dashboards depend on semantics, not raw events
 - Changes to source data do not ripple into analytical consumers
 
-This approach reduces cognitive load, simplifies governance, and makes analytical behavior predictable.
+This reduces cognitive load, simplifies governance, and makes analytical behavior predictable.
 
 ### Performance Strategy
-
 Two classes of analytical assets are used:
 
 - **Semantic views** for flexibility and correctness
 - **Snapshot tables** for dashboard performance and stable latency
 
-Snapshots are designed to be refreshed on a schedule and are intentionally derived from semantic views to preserve consistency.
+Snapshots are refreshed on a schedule and intentionally derived from semantic views to preserve consistency.
 
 ### Data Quality as Analytics
-
 Data quality is surfaced alongside business metrics.
 
-Null rates, invalid values, and completeness trends are exposed as Gold datasets, reinforcing the idea that analytical insight includes confidence in the underlying data.
+Null rates, invalid values, and completeness trends are exposed as Gold datasets, reinforcing that analytical insight includes confidence in the underlying data.
 
 Principle:
-Analytics is not just about insight.  
+Analytics is not just about insight.
 It is about trust at scale.
 
+---
+
 ## Performance Optimization
+- Inspect query plans before changing storage to confirm pruning, pushdown, and shuffle behavior
+- Partition Silver events by `event_date` and `event_type` to align with dominant analytical filters
+- Avoid high-cardinality partition keys (`user_id`, `product_id`) to prevent small-file sprawl and skew
+- Treat file compaction as mandatory; use OPTIMIZE/ZORDER when available, otherwise enforce controlled rewrites
+- Benchmark representative workload queries to validate improvements and avoid placebo tuning
+- Use caching only for short-lived, iterative analytics and explicitly uncache to keep results honest
 
-- Inspected query plans before changing storage to confirm pruning, pushdown, and shuffle behavior.
-- Partitioned Silver events by `event_date` and `event_type` to align with dominant analytical filters.
-- Avoided high-cardinality partition keys (user_id, product_id) to prevent small-file sprawl and skew.
-- Treated file compaction as mandatory; used OPTIMIZE/ZORDER when available, otherwise enforced controlled rewrites.
-- Benchmarked representative workload queries to validate improvements and avoid placebo tuning.
-- Used caching only for short-lived, iterative analytics and explicitly uncached to keep results honest.
-
-Key takeaway:  
+Key takeaway:
 Performance is shaped by data layout and access patterns, not last-mile query tweaks.
 
+---
 
 ## Statistical Analysis and ML Feature Layer
 
 Day 11 introduces a bridge between analytics and ML by formalizing two Gold assets:
 
-- **gold.daily_kpis**: stable-grain dataset for statistical testing and trend analysis
-- **gold.ml_features_purchase_intent**: reusable feature table for model training
+- `gold.daily_kpis`: stable-grain dataset for statistical testing and trend analysis
+- `gold.ml_features_purchase_intent`: reusable feature table for model training
 
 Key design choices:
-- Statistical tests operate on aggregated KPIs to ensure comparable samples.
-- Feature engineering is treated as a governed layer, not notebook logic.
-- Features combine time signals, user behavior history, user lifetime aggregates, and product popularity signals.
+- Statistical tests operate on aggregated KPIs to ensure comparable samples
+- Feature engineering is treated as a governed layer, not notebook logic
+- Features combine time signals, user behavior history, user lifetime aggregates, and product popularity signals
 
 Principle:
 ML readiness comes from reproducible feature tables, not ad-hoc transformations.
+
+---
 
 ## ML Experiment Architecture
 
 ML experiments are treated as a governed workflow:
 
-- Training datasets are materialized as Gold tables to make inputs reproducible.
-- Evaluation uses time-based splits to reflect production behavior and prevent leakage.
-- MLflow is used for tracking parameters, metrics, and model artifacts to support comparison and iteration.
+- Training datasets materialized as Gold tables to make inputs reproducible
+- Evaluation uses time-based splits to reflect production behavior and reduce leakage
+- MLflow tracks parameters, metrics, and artifacts to support comparison and iteration
 
 Principle:
 If experiments can’t be reproduced from versioned inputs, they’re not engineering artifacts.
 
-## Model Comparison & Feature Engineering 
+---
+
+## Model Comparison and Feature Engineering
 
 ### Flow
-Bronze → Silver → Gold (`ml_training_product_day`)  
-→ Spark ML Pipelines  
-→ MLflow Experiment Tracking
+Bronze → Silver → Gold (`ml_training_product_day`)
+→ Spark ML Pipelines
+→ MLflow experiment tracking
 
 ### ML Layer
 - VectorAssembler
@@ -192,26 +207,28 @@ Bronze → Silver → Gold (`ml_training_product_day`)
 - MLflow (file-backed)
 - Stored metrics, parameters, artifacts, signatures
 
-### Principles
+Principles:
 Reproducible. Explainable. Production-oriented.
 
-## AI-Powered Analytics: Genie & Mosaic AI
+---
+
+## AI-Powered Analytics: Genie and Mosaic AI
 
 ### Flow
-Gold Analytics Tables  
-→ Genie (NL → SQL)  
-→ Spark / SQL Analytics  
-→ GenAI Inference (NLP)  
-→ MLflow Artifact & Insight Tracking  
+Gold analytics tables
+→ Genie (NL → SQL)
+→ Spark / SQL analytics
+→ GenAI inference (NLP)
+→ MLflow artifact and insight tracking
 
 ### Components
-- Analytics Layer: Gold views and KPI tables
-- Query Layer: SQL + Genie abstraction
-- AI Layer: NLP inference (sentiment)
-- Insight Layer: Heuristic + AI-assisted summaries
-- Tracking Layer: MLflow (file-backed, Volume storage)
+- Analytics layer: Gold views and KPI tables
+- Query layer: SQL + Genie abstraction
+- AI layer: NLP inference (sentiment)
+- Insight layer: heuristic + AI-assisted summaries
+- Tracking layer: MLflow (file-backed, Volume storage)
 
-### Design Principles
+Design principles:
 - AI augments analytics, not replaces it
 - Interpretability over black-box generation
 - Traceable insights via artifacts
