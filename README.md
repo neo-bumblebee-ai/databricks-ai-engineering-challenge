@@ -17,10 +17,31 @@
 
 ## Overview
 
-This repository documents my hands-on work through the Databricks 14 Days of AI Challenge.
+This repository documents my hands-on work through the [Databricks 14 Days of AI Challenge](https://www.linkedin.com/company/indian-data-club/), organized by Indian Data Club (IDC) and supported by Databricks and Codebasics.
+
 I used the challenge as a structured boundary to validate production-grade patterns: governance constraints, storage semantics, catalog behavior, and operational trade-offs that surface in real platforms.
 
-Organized by Indian Data Club (IDC) and supported by Databricks and Codebasics.
+---
+
+## Dataset
+
+**Source:** [eCommerce Events History (Kaggle)](https://www.kaggle.com/datasets/mkechinov/ecommerce-events-history-in-cosmetics-shop)
+
+- October and November 2019 user behavior events (views, cart adds, purchases)
+- Uploaded to Databricks Unity Catalog Volumes for controlled access
+- Used as the raw input for the full Bronze → Silver → Gold pipeline
+
+---
+
+## Prerequisites
+
+- Databricks workspace (Community Edition or higher)
+- Unity Catalog enabled (required for Volumes and governed tables)
+- Dataset uploaded to a Unity Catalog Volume at your configured path
+- Python 3.x, PySpark (provided by Databricks runtime)
+- MLflow (included in Databricks runtime; file-based tracking used for Community Edition)
+
+> Community Edition restricts some platform features (e.g., certain optimizations, managed Unity Catalog). Notebooks handle those constraints explicitly where relevant.
 
 ---
 
@@ -36,11 +57,15 @@ Screenshots and proof artifacts live in: `screenshots/README.md`
 
 ---
 
-## Capstone project (Days 15–21)
+## Key skills demonstrated
 
-I’m creating the capstone as a separate repository so it reads like a real project (clean structure, runbook, reproducible outputs).
-
-Capstone repo: Coming soon
+- Medallion architecture (Bronze / Silver / Gold) as an operational contract
+- Delta Lake: ACID guarantees, schema enforcement, MERGE upserts, time travel
+- Unity Catalog governance: Volumes, external tables, catalog/schema design
+- PySpark: window functions, joins, UDFs, distributed feature engineering
+- ML pipeline: Scikit-Learn + Spark ML, MLflow tracking, hyperparameter tuning
+- AI-powered analytics: Genie (NL → SQL), sentiment inference, insight logging
+- Databricks Jobs orchestration: parameterized notebooks, task dependencies, failure isolation
 
 ---
 
@@ -66,16 +91,11 @@ Capstone repo: Coming soon
 
 ## How to run (high level)
 
-This repo is notebook-first and runs in Databricks.
-
-1) Run `notebooks/day00_setup_validation.ipynb` to validate environment and dataset access
-2) Run notebooks sequentially using `notebooks/README.md` as the index
-3) Bronze → Silver → Gold tables are created along the way (Delta)
-4) MLflow work begins in Day 12 and builds on Gold feature tables produced in Day 11
-
-Notes:
-- The environment is designed around Unity Catalog Volumes for controlled storage.
-- In Community Edition, some platform features (for example certain optimizations) may be limited. The notebooks handle those constraints explicitly where relevant.
+1. Upload the dataset to a Unity Catalog Volume in your Databricks workspace
+2. Run `notebooks/day00_setup_validation.ipynb` to validate environment and dataset access
+3. Run notebooks sequentially using `notebooks/README.md` as the index
+4. Bronze → Silver → Gold tables are created along the way (Delta)
+5. MLflow work begins in Day 12 and builds on Gold feature tables produced in Day 11
 
 ---
 
